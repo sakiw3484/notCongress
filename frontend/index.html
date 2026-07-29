@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>notCongress</title>
+</head>
+<body>
+    <section>
+        <p> Search a bill</p>
+        <input id="billInput" type="text" placeholder="e.g. HR21"/>
+        <button id="billButton" onclick="loadBill()">Search</button>
+        <div id="results">
+
+        </div>
+    </section>
+    
+<script>
+   async function loadBill() {
+
+        console.log("button pressed");
+
+        const input = document
+            .getElementById('billInput')
+            .value
+            .toLowerCase()
+            .trim();
+
+
+        const container = document.getElementById("results");
+
+
+        try {
+
+            const response = await fetch(
+                `http://localhost:3000/api/bill?congress=119&type=hr&number=${input}`
+            );
+
+
+            const bill = await response.json();
+
+
+            container.textContent = JSON.stringify(
+                bill,
+                null,
+                2
+            );
+
+
+        } catch (err) {
+
+            console.log(err);
+
+            container.textContent = "Error loading bill.";
+
+        }
+
+    }
+
+</script>
+</body>
+
+</html>
