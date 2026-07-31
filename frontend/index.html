@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>notCongress</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <section>
@@ -17,34 +18,32 @@
     
 <script>
    async function loadBill() {
-
         console.log("button pressed");
-
-        const input = document
-            .getElementById('billInput')
-            .value
-            .toLowerCase()
-            .trim();
-
-
+        const input = document.getElementById('billInput').value.toLowerCase().trim();
+        const match = input.match(/(hr|s)(\d+)/); // matches 'hr21' or 's123'
         const container = document.getElementById("results");
+        if (!match) {
+           alert('Please enter a bill like "hr21" or "s123".');
+           return;
+       }
+       const type = match[1];
+       const number = match[2];
 
 
         try {
-
             const response = await fetch(
-                `http://localhost:3000/api/bill?congress=119&type=hr&number=${input}`
+                `http://localhost:3000/api/bill?congress=119&type=${type}&number=${number}`
             );
 
+            if (!response.ok) {
+                throw new Error("Failed to load bill");
+            }
 
             const bill = await response.json();
+            //console.log(bill);
+            //container.textContent = JSON.stringify(bill,null,2 );
 
-
-            container.textContent = JSON.stringify(
-                bill,
-                null,
-                2
-            );
+            container.innerHTML += createBillCard(bill);
 
 
         } catch (err) {
@@ -55,6 +54,38 @@
 
         }
 
+    }
+
+    function createBillCard(bill){
+        return `
+        <div class="bill-card">
+            <div class="bill-meta">
+            
+                <span class="bill-id tag">
+                    ${bill.type}. ${bill.number}</span>
+
+                    <span class="tag">${bill.originChamber}</span>
+                    <span class="tag">${bill.policyArea}</span>
+
+            
+            </div>
+           
+            <div class="bill-content">
+                <div class="bill-title">${bill.title}</div>
+                <div class="bill-summary">${bill.summary}</div>
+
+                <div class="bill-sponsor">${bill.sponsors}</div>
+
+
+
+                </div>
+                
+            <div class ="bill-footer">
+                    </div>
+
+
+          
+        </div>`; 
     }
 
 </script>

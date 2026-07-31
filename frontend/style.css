@@ -1,0 +1,19 @@
+.bill-card{
+    background-color: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px;
+    border:1px solid #000000;
+}
+
+.tag {
+    padding: 5px 10px;
+    border-radius: 15px;
+    background: #eee;
+    font-size: .8rem;
+}
+.bill-title {
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin: 15px 0;
+}
