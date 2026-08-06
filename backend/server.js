@@ -9,26 +9,62 @@ const server = http.createServer(async(req, res) => {
 
     const url = new URL(req.url, "http://localhost:3000");
 
+    
+
     if(url.pathname === "/api/bill"){
         
         const congress = url.searchParams.get("congress");
         const type = url.searchParams.get("type");
         const number = url.searchParams.get("number");
+
+        let billData;
+        let summaryData;
+        
         try{
             //get basic bill info
             const billResponse = await fetch(
                 `https://api.congress.gov/v3/bill/${congress}/${type}/${number}?api_key=${API_KEY}`
             );
-            const billData = await billResponse.json();
 
+            billData = await billResponse.json();
+            console.log("recived bill data");
+
+        }catch (err){ 
+            res.writeHead(500, {
+                "Content-Type": "application/json" 
+            });
+
+            res.end(JSON.stringify({
+                error: "Unable to fetch bill."
+            }));
+
+            return;
+        }
+        try {
 
             //get bill summary 
             const summaryResponse = await fetch(
                 `https://api.congress.gov/v3/bill/${congress}/${type}/${number}/summaries?api_key=${API_KEY}`
             );
-            const summaryData = await summaryResponse.json();
+             
+            summaryData = await summaryResponse.json();
+            console.log("recived bill summary");
 
-            const summary = summaryData.summaries[0].text;
+        }catch(err){
+            res.writeHead(500, {
+                "Content-Type": "application/json" 
+            });
+
+            res.end(JSON.stringify({
+                error: "Unable to fetch bill."
+            }));
+            return;
+
+        }
+
+
+
+            let summary = summaryData.summaries[0].text;
             summary = summary.replace(/<p><strong>.*?<\/strong><\/p>/, "");
             const shortSummary = summary.replace(/<[^>]*>/g, "") // Remove HTML tags
             .replace(/\s+/g, " ")    // Remove extra whitespace
@@ -74,16 +110,7 @@ const server = http.createServer(async(req, res) => {
             res.end(JSON.stringify(billsInfo));
             console.log(billsInfo);
 
-        }catch (err){
-            res.writeHead(500, {
-                "Content-Type": "application/json" 
-            });
-
-            res.end(JSON.stringify({
-                error: "Unable to fetch bill."
-            }));
-
-        }
+        
         return;
     } 
     res.writeHead(404);
@@ -94,3 +121,4 @@ const server = http.createServer(async(req, res) => {
 server.listen(3000, () => {
     console.log("Server running on port 3000")
 })
+
