@@ -40,39 +40,11 @@ const server = http.createServer(async(req, res) => {
 
             return;
         }
-        try {
-
-            //get bill summary 
-            const summaryResponse = await fetch(
-                `https://api.congress.gov/v3/bill/${congress}/${type}/${number}/summaries?api_key=${API_KEY}`
-            );
-             
-            summaryData = await summaryResponse.json();
-            console.log("recived bill summary");
-
-        }catch(err){
-            res.writeHead(500, {
-                "Content-Type": "application/json" 
-            });
-
-            res.end(JSON.stringify({
-                error: "Unable to fetch bill."
-            }));
-            return;
-
-        }
+     
 
 
-
-            let summary = summaryData.summaries[0].text;
-            summary = summary.replace(/<p><strong>.*?<\/strong><\/p>/, "");
-            const shortSummary = summary.replace(/<[^>]*>/g, "") // Remove HTML tags
-            .replace(/\s+/g, " ")    // Remove extra whitespace
-            .trim()
-            .slice(0, 250) + "...";
-
-
-            if(!billData.bill) {
+       
+        if(!billData.bill) {
                 res.writeHead(404, {
                     "Content-Type": "application/json",
                     "Access-Control-Allow-Origin": "*"
@@ -82,6 +54,7 @@ const server = http.createServer(async(req, res) => {
                 }));
                 return;
             }
+
             console.log("Received data");
 
             const billsInfo ={
@@ -92,9 +65,9 @@ const server = http.createServer(async(req, res) => {
                 originChamber: billData.bill.originChamber,
                 introducedDate: billData.bill.introducedDate,
                 sponsors: billData.bill.sponsors[0]?.fullName,
-                summary: shortSummary
+                //summary: summaryData.text
+
                
-            
         
             };
             //console.log(billsInfo);
@@ -107,6 +80,8 @@ const server = http.createServer(async(req, res) => {
                 "Access-Control-Allow-Origin": "*"
             });
             
+            console.log("billsInfo");
+
             res.end(JSON.stringify(billsInfo));
             console.log(billsInfo);
 

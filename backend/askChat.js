@@ -9,7 +9,7 @@ const client = new OpenAI();
 async function main(){
     const response = await client.responses.create({
         model: "gpt-5.6",
-        input: "Write a short bedtime story about a unicorn.", 
+        input: "explain ", 
       });
       
       console.log(response.output_text);
