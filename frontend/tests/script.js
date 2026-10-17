@@ -1,8 +1,8 @@
-// House chamber layout: 435 seats in 15 curved rows, split by a center aisle.
-const TOTAL_SEATS = 435;
-const ROWS = 15;
+// House chamber layout: 50 seats in 10 curved rows, split by a center aisle.
+const TOTAL_SEATS = 50;
+const ROWS = 5;
 const ROW_LABELS = "ABCDEFGHIJKLMNO".split("");
-const MAX_SEATS = 8;
+const MAX_SEATS = 10;
 
 // Coordinate space used for layout (converted to % so it scales fluidly)
 const W = 1000;
@@ -11,7 +11,7 @@ const CENTER_X = W / 2;
 const CENTER_Y = 540;
 const R_MIN = 140;
 const R_MAX = 480;
-const AISLE_DEG = 6;    // gap on each side of the center
+const AISLE_DEG = 0;    // gap on each side of the center
 const SPREAD_DEG = 88;  // how far around each side the seats go
 
 const chamber = document.getElementById("chamber");
@@ -108,7 +108,7 @@ function buildChamber() {
   chamber.appendChild(frag);
 }
 
-// One listener for all 435 seats
+// One listener for all  seats
 chamber.addEventListener("click", (e) => {
   const seat = e.target.closest(".seat");
   if (seat && !seat.disabled) toggleSeat(seat);
